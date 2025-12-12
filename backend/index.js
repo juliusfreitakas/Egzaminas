@@ -1,46 +1,29 @@
 const express = require('express');
-const mysql = require('mysql2/promise');
 const cors = require('cors');
-require('dotenv').config();
+const mysql = require('mysql2');
+const authRoutes = require('./auth');
+const renginiaiRoutes = require('./renginiai');
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-const db = mysql.createPool({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME
+const db = mysql.createConnection({
+  host: 'db',
+  user: 'root',
+  password: 'theanimefreak123',
+  database: 'renginiu_db',
 });
 
-app.get('/renginiai', async (req, res) => {
-  try {
-    const [rows] = await db.query('SELECT * FROM renginiai');
-    res.json(rows);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
+db.connect((err) => {
+  if (err) console.log('Database connection error:', err);
+  else console.log('Connected to MySQL database');
 });
 
-app.post('/renginiai', async (req, res) => {
-  try {
-    const { pavadinimas, data } = req.body;
-    await db.query('INSERT INTO renginiai (pavadinimas, data) VALUES (?, ?)', [pavadinimas, data]);
-    res.sendStatus(201);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
+app.locals.db = db;
 
-app.delete('/renginiai/:id', async (req, res) => {
-  try {
-    await db.query('DELETE FROM renginiai WHERE id = ?', [req.params.id]);
-    res.sendStatus(200);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
+app.use('/api/auth', authRoutes);
+app.use('/api/renginiai', renginiaiRoutes);
 
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Serveris veikia ant porto ${PORT}`));
+const PORT = process.env.PORT || 5001;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

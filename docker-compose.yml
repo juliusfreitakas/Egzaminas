@@ -1,14 +1,27 @@
 services:
+  db:
+    image: mysql:8
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: example
+      MYSQL_DATABASE: renginiu_db
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "3306:3306"
+    restart: always
+
   backend:
     build: ./backend
     container_name: backend
     ports:
       - "5001:5000"
     environment:
-      - DB_HOST=db
-      - DB_USER=root
-      - DB_PASSWORD=example
-      - DB_NAME=renginiu_db
+      DB_HOST: db
+      DB_USER: root
+      DB_PASSWORD: example
+      DB_NAME: renginiu_db
     depends_on:
       - db
     restart: always
@@ -20,18 +33,6 @@ services:
       - "3000:80"
     depends_on:
       - backend
-    restart: always
-
-  db:
-    image: mysql:8
-    container_name: mysql
-    environment:
-      MYSQL_ROOT_PASSWORD: example
-    volumes:
-      - db_data:/var/lib/mysql
-      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
-    ports:
-      - "3306:3306"
     restart: always
 
 volumes:
