@@ -1,0 +1,8 @@
+CREATE DATABASE IF NOT EXISTS renginiu_db;
+USE renginiu_db;
+
+CREATE TABLE IF NOT EXISTS renginiai (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    pavadinimas VARCHAR(255) NOT NULL,
+    data DATE NOT NULL
+);

@@ -3,8 +3,11 @@ frontend/node_modules/
 backend/node_modules/
 
 .env
+backend/.env
+frontend/.env
 
 frontend/build/
+
 backend/dist/
 
 *.log
@@ -13,6 +16,19 @@ yarn-debug.log*
 yarn-error.log*
 
 db_data/
+docker-compose.override.yml
 
 .DS_Store
 Thumbs.db
+*.swp
+*.swo
+
+.vscode/
+.idea/
+*.iml
+
+*.tmp
+*.bak
+*.orig
+
+nginx/cache/
